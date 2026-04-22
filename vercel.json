@@ -1,0 +1,31 @@
+{
+  "buildCommand": "next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "nodejs": "18.x",
+  "regions": ["iad1"],
+  "env": {
+    "NODE_ENV": {
+      "value": "production"
+    }
+  },
+  "headers": [
+    {
+      "source": "/public/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "redirects": [],
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/:path*"
+    }
+  ]
+}

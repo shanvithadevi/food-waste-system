@@ -1,0 +1,5 @@
+{"timestamp":"00:00:13.414","source":"Server","level":"WARN","message":"⚠ Duplicate page detected. app\\search\\page.js and app\\search\\page.tsx resolve to /search"}
+{"timestamp":"00:00:13.421","source":"Server","level":"WARN","message":"⚠ Duplicate page detected. app\\search\\page.js and app\\search\\page.tsx resolve to /search"}
+{"timestamp":"00:00:13.432","source":"Server","level":"LOG","message":""}
+{"timestamp":"00:00:16.577","source":"Server","level":"LOG","message":"○ Compiling / ..."}
+{"timestamp":"00:00:31.159","source":"Browser","level":"INFO","message":"%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"}

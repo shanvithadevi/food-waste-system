@@ -1,0 +1,16 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/delivery-login/page": "/delivery-login",
+  "/delivery-register/page": "/delivery-register",
+  "/delivery-view/page": "/delivery-view",
+  "/donor-login/page": "/donor-login",
+  "/donor-register/page": "/donor-register",
+  "/favicon.ico/route": "/favicon.ico",
+  "/food/page": "/food",
+  "/ngo-login/page": "/ngo-login",
+  "/ngo-register/page": "/ngo-register",
+  "/page": "/",
+  "/search/page": "/search",
+  "/view-donations/page": "/view-donations"
+}

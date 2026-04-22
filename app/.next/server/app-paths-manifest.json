@@ -1,0 +1,16 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/delivery-login/page": "app/delivery-login/page.js",
+  "/delivery-register/page": "app/delivery-register/page.js",
+  "/delivery-view/page": "app/delivery-view/page.js",
+  "/donor-login/page": "app/donor-login/page.js",
+  "/donor-register/page": "app/donor-register/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/food/page": "app/food/page.js",
+  "/ngo-login/page": "app/ngo-login/page.js",
+  "/ngo-register/page": "app/ngo-register/page.js",
+  "/page": "app/page.js",
+  "/search/page": "app/search/page.js",
+  "/view-donations/page": "app/view-donations/page.js"
+}

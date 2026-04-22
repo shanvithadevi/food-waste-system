@@ -1,0 +1,129 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/delivery-login",
+      "regex": "^/delivery\\-login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/delivery\\-login(?:/)?$"
+    },
+    {
+      "page": "/delivery-register",
+      "regex": "^/delivery\\-register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/delivery\\-register(?:/)?$"
+    },
+    {
+      "page": "/delivery-view",
+      "regex": "^/delivery\\-view(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/delivery\\-view(?:/)?$"
+    },
+    {
+      "page": "/donor-login",
+      "regex": "^/donor\\-login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/donor\\-login(?:/)?$"
+    },
+    {
+      "page": "/donor-register",
+      "regex": "^/donor\\-register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/donor\\-register(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/food",
+      "regex": "^/food(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/food(?:/)?$"
+    },
+    {
+      "page": "/ngo-login",
+      "regex": "^/ngo\\-login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ngo\\-login(?:/)?$"
+    },
+    {
+      "page": "/ngo-register",
+      "regex": "^/ngo\\-register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ngo\\-register(?:/)?$"
+    },
+    {
+      "page": "/search",
+      "regex": "^/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/search(?:/)?$"
+    },
+    {
+      "page": "/view-donations",
+      "regex": "^/view\\-donations(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/view\\-donations(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}
