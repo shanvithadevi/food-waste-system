@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -177,7 +177,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen">
       {/* Sidebar - Hidden on certain pages */}
       {!hideSidebar && (
-        <div className={`fixed top-0 left-0 h-full bg-gradient-to-b from-white via-gray-50 to-white shadow-2xl p-8 transition-all duration-500 ease-in-out z-50 border-r-4 border-pink-300 overflow-y-auto
+        <div className={`fixed top-16 left-0 h-full bg-gradient-to-b from-white via-gray-50 to-white shadow-2xl p-8 transition-all duration-500 ease-in-out z-50 border-r-4 border-pink-300 overflow-y-auto
           ${open ? (minimized ? "w-20" : "w-96") : "w-0 -translate-x-full opacity-0 overflow-hidden"}`}>
 
           <div className="flex items-center justify-between mb-10">
@@ -187,22 +187,22 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
                   <span className="text-2xl">🍽️</span>
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-800">FoodShare</h2>
-                  <p className="text-sm text-gray-500">Waste Management</p>
+                  <h2 className="text-3xl font-bold text-black">FoodShare</h2>
+                  <p className="text-sm text-black">Waste Management</p>
                 </div>
               </div>
             )}
             <div className="flex gap-2">
               <button
                 onClick={() => setMinimized(!minimized)}
-                className="text-gray-500 hover:text-gray-700 text-xl hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition"
+                className="text-black hover:text-black text-xl hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition"
                 title={minimized ? "Expand sidebar" : "Minimize sidebar"}
               >
                 {minimized ? "→" : "←"}
               </button>
               <button
                 onClick={() => setOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition"
+                className="text-black hover:text-black text-2xl hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition"
               >
                 ✕
               </button>
@@ -214,8 +214,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               <span className="text-xl group-hover:scale-110 transition">🏠</span>
               {!minimized && (
                 <div>
-                  <span className="font-semibold text-gray-800 group-hover:text-pink-600 transition text-sm">Home</span>
-                  <p className="text-xs text-gray-500">Main dashboard</p>
+                  <span className="font-semibold text-black group-hover:text-pink-600 transition text-sm">Home</span>
+                  <p className="text-xs text-black">Main dashboard</p>
                 </div>
               )}
             </Link>
@@ -224,8 +224,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               <span className="text-xl group-hover:scale-110 transition">👤</span>
               {!minimized && (
                 <div>
-                  <span className="font-semibold text-gray-800 group-hover:text-green-600 transition text-sm">Donor Login</span>
-                  <p className="text-xs text-gray-500">Share your food</p>
+                  <span className="font-semibold text-black group-hover:text-green-600 transition text-sm">Donor Login</span>
+                  <p className="text-xs text-black">Share your food</p>
                 </div>
               )}
             </Link>
@@ -234,8 +234,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               <span className="text-xl group-hover:scale-110 transition">🏢</span>
               {!minimized && (
                 <div>
-                  <span className="font-semibold text-gray-800 group-hover:text-blue-600 transition text-sm">NGO Login</span>
-                  <p className="text-xs text-gray-500">Receive donations</p>
+                  <span className="font-semibold text-black group-hover:text-blue-600 transition text-sm">NGO Login</span>
+                  <p className="text-xs text-black">Receive donations</p>
                 </div>
               )}
             </Link>
@@ -244,8 +244,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               <span className="text-xl group-hover:scale-110 transition">⚙️</span>
               {!minimized && (
                 <div>
-                  <span className="font-semibold text-gray-800 group-hover:text-purple-600 transition text-sm">Admin Login</span>
-                  <p className="text-xs text-gray-500">System management</p>
+                  <span className="font-semibold text-black group-hover:text-purple-600 transition text-sm">Admin Login</span>
+                  <p className="text-xs text-black">System management</p>
                 </div>
               )}
             </Link>
@@ -254,8 +254,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               <span className="text-xl group-hover:scale-110 transition">🔍</span>
               {!minimized && (
                 <div>
-                  <span className="font-semibold text-gray-800 group-hover:text-pink-600 transition text-sm">Search</span>
-                  <p className="text-xs text-gray-500">Find near me</p>
+                  <span className="font-semibold text-black group-hover:text-pink-600 transition text-sm">Search</span>
+                  <p className="text-xs text-black">Find near me</p>
                 </div>
               )}
             </Link>
@@ -264,8 +264,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
               <span className="text-xl group-hover:scale-110 transition">🚚</span>
               {!minimized && (
                 <div>
-                  <span className="font-semibold text-gray-800 group-hover:text-orange-600 transition text-sm">Delivery Login</span>
-                  <p className="text-xs text-gray-500">Partner login</p>
+                  <span className="font-semibold text-black group-hover:text-orange-600 transition text-sm">Delivery Login</span>
+                  <p className="text-xs text-black">Partner login</p>
                 </div>
               )}
             </Link>
@@ -281,7 +281,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
           {!hideSidebar && (
             <button
               onClick={() => setOpen(!open)}
-              className="text-2xl hover:bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center transition"
+              className="text-2xl text-black hover:bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center transition"
               title="Toggle sidebar"
             >
               ☰
@@ -300,7 +300,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchOpen(true)}
-                className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition"
+                className="flex-1 px-4 py-2 text-black border-2 border-gray-300 rounded-lg focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition"
               />
               <button
                 onClick={handleSearch}
@@ -320,8 +320,8 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
                     className="block p-4 hover:bg-pink-50 cursor-pointer border-b last:border-b-0"
                     onClick={() => setSearchOpen(false)}
                   >
-                    <p className="font-semibold text-gray-800">{result.title}</p>
-                    <p className="text-sm text-gray-600">{result.location}</p>
+                    <p className="font-semibold text-black">{result.title}</p>
+                    <p className="text-sm text-black">{result.location}</p>
                   </Link>
                 ))}
               </div>
@@ -332,7 +332,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-4">
             {currentUser ? (
               <div className="text-right">
-                <p className="font-semibold text-gray-800">{currentUser.type?.toUpperCase()}</p>
+                <p className="font-semibold text-black">{currentUser.type?.toUpperCase()}</p>
                 <button
                   onClick={handleLogout}
                   className="text-sm text-pink-600 hover:text-pink-800 font-semibold"
@@ -341,7 +341,7 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
             ) : (
-              <p className="text-gray-600">Not logged in</p>
+              <p className="text-black">Not logged in</p>
             )}
             <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
               {currentUser ? currentUser.type?.[0]?.toUpperCase() : "?"}
