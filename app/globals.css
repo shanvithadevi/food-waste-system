@@ -1,25 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #fdf6f9;
+  --foreground: #111111;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-body {
   font-family: 'Poppins', sans-serif;
-  background-color: #fdf6f9;
+  min-height: 100%;
 }
 
 /* Home Page Background Styles */
@@ -38,10 +33,7 @@ body {
 .home-background::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: 
     radial-gradient(circle at 20% 50%, rgba(255, 182, 193, 0.3) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(100, 149, 237, 0.3) 0%, transparent 50%),
@@ -67,7 +59,39 @@ body {
   }
 }
 
-/* Ensure smooth scrolling experience */
+/* Smooth scroll */
 html {
   scroll-behavior: smooth;
+}
+
+/* ================== GLOBAL TEXT FIX ================== */
+
+/* Force all text to be dark by default */
+* {
+  color: #111 !important;
+}
+
+/* Inputs & typing fields */
+input, textarea, select {
+  color: #111 !important;
+  background-color: #fff !important;
+  border: 1px solid #ccc;
+  caret-color: #111 !important; /* cursor color */
+}
+
+/* Placeholder text */
+input::placeholder, textarea::placeholder {
+  color: #666 !important;
+}
+
+/* When clicking / focusing input */
+input:focus, textarea:focus, select:focus {
+  color: #111 !important;
+  background-color: #fff !important;
+  outline: none;
+}
+
+/* Sidebar text */
+.sidebar, .sidebar * {
+  color: #111 !important;
 }
