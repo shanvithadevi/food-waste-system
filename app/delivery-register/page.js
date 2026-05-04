@@ -1,24 +1,26 @@
  "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DeliveryRegister() {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [vehicle, setVehicle] = useState("");
-  const [company, setCompany] = useState("");
-  const [showMsg, setShowMsg] = useState(false);
+  const router = useRouter();
+
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    vehicle: "",
+    company: "",
+    username: "",
+    password: "",
+  });
 
   const handleRegister = (e) => {
     e.preventDefault();
 
     const newPartner = {
       id: Date.now(),
-      name,
-      phone,
-      email,
-      vehicle,
-      company,
+      ...form,
     };
 
     const existing = JSON.parse(localStorage.getItem("partners")) || [];
@@ -26,111 +28,34 @@ export default function DeliveryRegister() {
 
     localStorage.setItem("partners", JSON.stringify(updated));
 
-    // show success message
-    setShowMsg(true);
-    setTimeout(() => setShowMsg(false), 2000);
+    alert("Registered Successfully!");
 
-    // clear form
-    setName("");
-    setPhone("");
-    setEmail("");
-    setVehicle("");
-    setCompany("");
+    // 👉 Redirect
+    router.push("/delivery-view");
   };
 
   return (
-    <main className="p-6 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center">
-      <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-blue-200 max-w-md w-full">
+    <main className="p-6 flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
+      <form onSubmit={handleRegister} className="bg-white p-6 rounded-xl shadow w-96 flex flex-col gap-2">
 
-        <h1 className="text-3xl font-bold text-blue-600 text-center mb-2">
-          🚚 Delivery Registration
+        <h1 className="text-xl font-bold text-center mb-2">
+          Delivery Register
         </h1>
 
-        <p className="text-center text-gray-500 mb-6 text-sm">
-          Register as a delivery partner
-        </p>
+        <input placeholder="Name" onChange={(e)=>setForm({...form,name:e.target.value})} required />
+        <input placeholder="Phone" onChange={(e)=>setForm({...form,phone:e.target.value})} required />
+        <input placeholder="Email" onChange={(e)=>setForm({...form,email:e.target.value})} required />
+        <input placeholder="Vehicle" onChange={(e)=>setForm({...form,vehicle:e.target.value})} required />
+        <input placeholder="Company" onChange={(e)=>setForm({...form,company:e.target.value})} required />
 
-        <form onSubmit={handleRegister} className="flex flex-col gap-3">
+        {/* NEW */}
+        <input placeholder="Username" onChange={(e)=>setForm({...form,username:e.target.value})} required />
+        <input type="password" placeholder="Password" onChange={(e)=>setForm({...form,password:e.target.value})} required />
 
-          <div>
-            <label className="block text-blue-700 font-semibold mb-1 text-sm">
-              Name
-            </label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter name"
-              className="w-full border-2 border-blue-300 p-2 rounded-lg bg-blue-50 text-sm"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-blue-700 font-semibold mb-1 text-sm">
-              Phone
-            </label>
-            <input
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="Enter phone"
-              className="w-full border-2 border-blue-300 p-2 rounded-lg bg-blue-50 text-sm"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-blue-700 font-semibold mb-1 text-sm">
-              Email
-            </label>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter email"
-              className="w-full border-2 border-blue-300 p-2 rounded-lg bg-blue-50 text-sm"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-blue-700 font-semibold mb-1 text-sm">
-              Vehicle
-            </label>
-            <input
-              value={vehicle}
-              onChange={(e) => setVehicle(e.target.value)}
-              placeholder="e.g., Bike / Car"
-              className="w-full border-2 border-blue-300 p-2 rounded-lg bg-blue-50 text-sm"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-blue-700 font-semibold mb-1 text-sm">
-              Company
-            </label>
-            <input
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              placeholder="e.g., Swiggy, Uber"
-              className="w-full border-2 border-blue-300 p-2 rounded-lg bg-blue-50 text-sm"
-              required
-            />
-          </div>
-
-          <button className="bg-gradient-to-r from-blue-400 to-blue-500 text-white p-2 rounded-lg font-bold text-sm mt-4">
-            ✓ Register
-          </button>
-
-        </form>
-
-        {/* Success Message */}
-        {showMsg && (
-          <p className="text-green-600 text-center mt-3">
-            Delivery Partner Registered!
-          </p>
-        )}
-
-      </div>
+        <button className="bg-blue-500 text-white p-2 rounded mt-2">
+          Register
+        </button>
+      </form>
     </main>
   );
 }
