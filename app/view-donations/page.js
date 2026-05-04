@@ -2,21 +2,22 @@
 import { useState, useEffect } from "react";
 
 export default function ViewDonations() {
-  const [showDialog, setShowDialog] = useState(false);
-  const [selectedFood, setSelectedFood] = useState(null);
-  const [showPartners, setShowPartners] = useState(false);
   const [donations, setDonations] = useState([]);
-  const [deliveryPartners, setDeliveryPartners] = useState([]);
-  const [popupMsg, setPopupMsg] = useState("");
+  const [partners, setPartners] = useState([]);
+  const [selectedFood, setSelectedFood] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [showPartners, setShowPartners] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("donations")) || [];
     setDonations(data);
 
-    const partners = JSON.parse(localStorage.getItem("partners")) || [];
-    setDeliveryPartners(partners);
+    const p = JSON.parse(localStorage.getItem("partners")) || [];
+    setPartners(p);
   }, []);
 
+  // Accept click
   const handleAccept = (food) => {
     const updated = donations.map((item) =>
       item.id === food.id
@@ -31,121 +32,155 @@ export default function ViewDonations() {
     setShowDialog(true);
   };
 
-  const availableFoods = donations.filter((i) => i.status === "AVAILABLE");
-  const donatedFoods = donations.filter((i) => i.status === "DONATED");
+  const available = donations.filter((d) => d.status === "AVAILABLE");
+  const donated = donations.filter((d) => d.status === "DONATED");
 
   return (
     <main className="p-6 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
 
-        <h1 className="text-3xl font-bold text-center mb-6">
+        <h1 className="text-3xl font-bold text-center mb-10 text-blue-600">
           View Donations
         </h1>
 
-        {/* Popup */}
-        {popupMsg && (
-          <p className="text-green-600 text-center mb-4">{popupMsg}</p>
-        )}
+        <div className="grid md:grid-cols-2 gap-6">
 
-        <div className="grid grid-cols-2 gap-6">
+          {/* AVAILABLE */}
+          <div className="bg-white p-5 rounded-xl shadow border-l-4 border-orange-400">
+            <h2 className="text-xl font-bold text-orange-600 mb-4">
+              Available Donations
+            </h2>
 
-          {/* Available */}
-          <div>
-            <h2>Available Donations</h2>
-
-            {availableFoods.map((food) => (
-              <div key={food.id}>
-                <p>{food.name}</p>
+            {available.map((food) => (
+              <div key={food.id} className="bg-orange-50 p-4 rounded mb-3 border">
+                <p className="font-bold">{food.name}</p>
                 <p>{food.quantity}</p>
                 <p>{food.location}</p>
 
-                <button onClick={() => handleAccept(food)}>
+                <button
+                  onClick={() => handleAccept(food)}
+                  className="mt-3 w-full bg-orange-400 text-white p-2 rounded"
+                >
                   Accept
                 </button>
               </div>
             ))}
           </div>
 
-          {/* Donated */}
-          <div>
-            <h2>Accepted Donations</h2>
+          {/* ACCEPTED */}
+          <div className="bg-white p-5 rounded-xl shadow border-l-4 border-green-400">
+            <h2 className="text-xl font-bold text-green-600 mb-4">
+              Accepted Donations
+            </h2>
 
-            {donatedFoods.map((food) => (
-              <div key={food.id}>
-                <p>{food.name}</p>
+            {donated.map((food) => (
+              <div key={food.id} className="bg-green-50 p-4 rounded mb-3 border">
+                <p className="font-bold">{food.name}</p>
                 <p>{food.quantity}</p>
                 <p>{food.location}</p>
-                <p>NGO: {food.ngo}</p>
+                <p className="text-sm">NGO: {food.ngo}</p>
+
+                <span className="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                  DONATED
+                </span>
               </div>
             ))}
           </div>
 
         </div>
 
-        {/* Dialog */}
-        {showDialog && selectedFood && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-
-            <div className="bg-white p-6 rounded-xl w-80">
+        {/* STEP 1 DIALOG */}
+        {showDialog && (
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-xl w-80 shadow-lg">
 
               <h2 className="text-lg font-bold mb-4 text-center">
-                Select Delivery
+                Select Delivery Option
               </h2>
 
-              {!showPartners ? (
-                <>
-                  <button
-                    onClick={() => setShowPartners(true)}
-                    className="w-full bg-blue-500 text-white p-2 rounded mb-2"
-                  >
-                    Choose Delivery Partner
-                  </button>
+              <button
+                onClick={() => setShowPartners(true)}
+                className="w-full bg-blue-500 text-white p-2 rounded mb-2"
+              >
+                Choose Delivery Partner
+              </button>
+
+              <button
+                onClick={() => {
+                  alert("Self Pickup Selected");
+                  setShowDialog(false);
+                }}
+                className="w-full bg-green-500 text-white p-2 rounded mb-2"
+              >
+                Self Pickup
+              </button>
+
+              <button
+                onClick={() => setShowDialog(false)}
+                className="w-full bg-gray-300 p-2 rounded"
+              >
+                Cancel
+              </button>
+
+            </div>
+          </div>
+        )}
+
+        {/* STEP 2 DELIVERY PARTNERS */}
+        {showPartners && (
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-xl w-80">
+
+              <h2 className="text-lg font-bold mb-3 text-center">
+                Select Driver
+              </h2>
+
+              {partners.map((p) => (
+                <div key={p.id} className="border p-3 mb-2 rounded">
+                  <p className="font-bold">{p.name}</p>
+                  <p className="text-sm">{p.company}</p>
 
                   <button
                     onClick={() => {
-                      setPopupMsg("Self Pickup Selected");
-                      setTimeout(() => setPopupMsg(""), 2000);
-                      setShowDialog(false);
+                      setShowConfirm(true);
+                      setShowPartners(false);
                     }}
-                    className="w-full bg-green-500 text-white p-2 rounded mb-2"
+                    className="bg-blue-500 text-white px-2 py-1 mt-2 rounded"
                   >
-                    Self Pickup
+                    Select
                   </button>
+                </div>
+              ))}
 
-                  <button
-                    onClick={() => setShowDialog(false)}
-                    className="w-full bg-gray-300 p-2 rounded"
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button onClick={() => setShowPartners(false)}>
-                    ← Back
-                  </button>
+              <button onClick={() => setShowPartners(false)}>Back</button>
+            </div>
+          </div>
+        )}
 
-                  <h3 className="mt-2 mb-2">Partners</h3>
+        {/* STEP 3 CONFIRM DELIVERY */}
+        {showConfirm && selectedFood && (
+          <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-xl w-80">
 
-                  {deliveryPartners.map((p) => (
-                    <div key={p.id} className="border p-2 mb-2">
-                      <p>{p.name}</p>
-                      <p>{p.company}</p>
+              <h2 className="text-lg font-bold mb-3 text-center">
+                Confirm Delivery
+              </h2>
 
-                      <button
-                        onClick={() => {
-                          setPopupMsg("Driver Selected. Contact via company.");
-                          setTimeout(() => setPopupMsg(""), 2500);
-                          setShowDialog(false);
-                        }}
-                        className="bg-blue-500 text-white px-2 py-1 rounded"
-                      >
-                        Select
-                      </button>
-                    </div>
-                  ))}
-                </>
-              )}
+              <p><b>Food:</b> {selectedFood.name}</p>
+              <p><b>Quantity:</b> {selectedFood.quantity}</p>
+              <p><b>Location:</b> {selectedFood.location}</p>
+              <p><b>NGO:</b> Helping NGO</p>
+
+              <button
+                onClick={() => {
+                  alert("Delivery Assigned Successfully!");
+                  setShowConfirm(false);
+                  setShowDialog(false);
+                }}
+                className="mt-3 w-full bg-green-500 text-white p-2 rounded"
+              >
+                Confirm Delivery
+              </button>
 
             </div>
           </div>
