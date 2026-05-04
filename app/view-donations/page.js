@@ -7,7 +7,6 @@ export default function ViewDonations() {
   const [selectedFood, setSelectedFood] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [showPartners, setShowPartners] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("donations")) || [];
@@ -17,7 +16,7 @@ export default function ViewDonations() {
     setPartners(p);
   }, []);
 
-  // Accept click
+  // ACCEPT FOOD
   const handleAccept = (food) => {
     const updated = donations.map((item) =>
       item.id === food.id
@@ -30,6 +29,29 @@ export default function ViewDonations() {
 
     setSelectedFood(food);
     setShowDialog(true);
+  };
+
+  // CREATE DELIVERY (IMPORTANT)
+  const createDelivery = (driver) => {
+    const newDelivery = {
+      id: Date.now(),
+      driverId: driver.id,
+      donorName: selectedFood.name,
+      donorPhone: selectedFood.phone,
+      foodName: selectedFood.name,
+      quantity: selectedFood.quantity,
+      location: selectedFood.location,
+      ngoName: "Helping NGO",
+      status: "pending",
+    };
+
+    const existing = JSON.parse(localStorage.getItem("deliveries")) || [];
+    localStorage.setItem("deliveries", JSON.stringify([...existing, newDelivery]));
+
+    alert("Driver Assigned Successfully!");
+
+    setShowDialog(false);
+    setShowPartners(false);
   };
 
   const available = donations.filter((d) => d.status === "AVAILABLE");
@@ -53,9 +75,12 @@ export default function ViewDonations() {
 
             {available.map((food) => (
               <div key={food.id} className="bg-orange-50 p-4 rounded mb-3 border">
+
                 <p className="font-bold">{food.name}</p>
-                <p>{food.quantity}</p>
-                <p>{food.location}</p>
+                <p>Quantity: {food.quantity}</p>
+                <p>Location: {food.location}</p>
+                <p>Phone: {food.phone}</p>
+                <p>Date: {food.preparedDate}</p>
 
                 <button
                   onClick={() => handleAccept(food)}
@@ -75,9 +100,12 @@ export default function ViewDonations() {
 
             {donated.map((food) => (
               <div key={food.id} className="bg-green-50 p-4 rounded mb-3 border">
+
                 <p className="font-bold">{food.name}</p>
-                <p>{food.quantity}</p>
-                <p>{food.location}</p>
+                <p>Quantity: {food.quantity}</p>
+                <p>Location: {food.location}</p>
+                <p>Phone: {food.phone}</p>
+                <p>Date: {food.preparedDate}</p>
                 <p className="text-sm">NGO: {food.ngo}</p>
 
                 <span className="bg-green-600 text-white px-3 py-1 rounded text-sm">
@@ -89,7 +117,7 @@ export default function ViewDonations() {
 
         </div>
 
-        {/* STEP 1 DIALOG */}
+        {/* STEP 1: DELIVERY OPTION */}
         {showDialog && (
           <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
             <div className="bg-white p-6 rounded-xl w-80 shadow-lg">
@@ -126,7 +154,7 @@ export default function ViewDonations() {
           </div>
         )}
 
-        {/* STEP 2 DELIVERY PARTNERS */}
+        {/* STEP 2: SELECT DRIVER */}
         {showPartners && (
           <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
             <div className="bg-white p-6 rounded-xl w-80">
@@ -141,10 +169,7 @@ export default function ViewDonations() {
                   <p className="text-sm">{p.company}</p>
 
                   <button
-                    onClick={() => {
-                      setShowConfirm(true);
-                      setShowPartners(false);
-                    }}
+                    onClick={() => createDelivery(p)}
                     className="bg-blue-500 text-white px-2 py-1 mt-2 rounded"
                   >
                     Select
@@ -152,36 +177,9 @@ export default function ViewDonations() {
                 </div>
               ))}
 
-              <button onClick={() => setShowPartners(false)}>Back</button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3 CONFIRM DELIVERY */}
-        {showConfirm && selectedFood && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-xl w-80">
-
-              <h2 className="text-lg font-bold mb-3 text-center">
-                Confirm Delivery
-              </h2>
-
-              <p><b>Food:</b> {selectedFood.name}</p>
-              <p><b>Quantity:</b> {selectedFood.quantity}</p>
-              <p><b>Location:</b> {selectedFood.location}</p>
-              <p><b>NGO:</b> Helping NGO</p>
-
-              <button
-                onClick={() => {
-                  alert("Delivery Assigned Successfully!");
-                  setShowConfirm(false);
-                  setShowDialog(false);
-                }}
-                className="mt-3 w-full bg-green-500 text-white p-2 rounded"
-              >
-                Confirm Delivery
+              <button onClick={() => setShowPartners(false)}>
+                Back
               </button>
-
             </div>
           </div>
         )}
