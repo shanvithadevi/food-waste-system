@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 import { useState, useEffect } from "react";
 
 export default function AddFood() {
@@ -10,7 +10,7 @@ export default function AddFood() {
   const [donations, setDonations] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
 
-  // Load existing data
+  // Load donations
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("donations")) || [];
     setDonations(data);
@@ -48,7 +48,7 @@ export default function AddFood() {
   return (
     <main className="p-4 bg-gradient-to-br from-green-100 to-blue-100 min-h-screen flex items-center justify-center">
       <div className="bg-white p-6 rounded-2xl shadow-xl border-2 border-green-200 max-w-lg w-full backdrop-blur">
-        
+
         <h1 className="text-3xl font-bold text-green-600 text-center mb-2">
           🍽️ Add Food Donation
         </h1>
@@ -58,7 +58,7 @@ export default function AddFood() {
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          
+
           <div>
             <label className="block text-green-700 font-semibold mb-1 text-sm">
               Food Name
@@ -67,7 +67,7 @@ export default function AddFood() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Rice, Biryani, Fruits"
+              placeholder="e.g., Rice, Biryani"
               className="w-full border-2 border-green-300 p-2 rounded-lg bg-green-50 text-sm"
               required
             />
@@ -79,10 +79,8 @@ export default function AddFood() {
                 Phone
               </label>
               <input
-                type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="Your contact"
                 className="w-full border-2 border-green-300 p-2 rounded-lg bg-green-50 text-sm"
                 required
               />
@@ -93,10 +91,8 @@ export default function AddFood() {
                 Quantity
               </label>
               <input
-                type="text"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                placeholder="e.g., 5 kg"
                 className="w-full border-2 border-green-300 p-2 rounded-lg bg-green-50 text-sm"
                 required
               />
@@ -108,10 +104,8 @@ export default function AddFood() {
               Location
             </label>
             <input
-              type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Pickup location"
               className="w-full border-2 border-green-300 p-2 rounded-lg bg-green-50 text-sm"
               required
             />
@@ -138,24 +132,50 @@ export default function AddFood() {
           </button>
         </form>
 
-        {/* Popup Message */}
+        {/* Popup */}
         {showMessage && (
-          <p className="text-green-600 mt-3 text-center">
+          <p className="text-green-600 text-center mt-3">
             Food added successfully!
           </p>
         )}
 
-        {/* Show All Donations */}
-        <h3 className="mt-6 font-bold">Food Donations</h3>
+        {/* Donations Section */}
+        <h3 className="mt-6 font-bold text-lg text-gray-700">
+          Food Donations
+        </h3>
 
-        {donations.map((item) => (
-          <div key={item.id}>
-            <p>{item.name}</p>
-            <p>{item.quantity}</p>
-            <p>{item.location}</p>
-            <p>{item.status}</p>
-          </div>
-        ))}
+        <div className="mt-4 space-y-3">
+          {donations.map((item) => (
+            <div
+              key={item.id}
+              className={`p-4 rounded-lg border shadow-sm ${
+                item.status === "AVAILABLE"
+                  ? "bg-orange-50 border-orange-200"
+                  : "bg-green-50 border-green-200"
+              }`}
+            >
+              <p className="font-bold text-gray-800">{item.name}</p>
+
+              <p className="text-sm text-gray-600">
+                Quantity: {item.quantity}
+              </p>
+
+              <p className="text-sm text-gray-600">
+                Location: {item.location}
+              </p>
+
+              <p
+                className={`mt-2 text-sm font-semibold ${
+                  item.status === "AVAILABLE"
+                    ? "text-orange-600"
+                    : "text-green-600"
+                }`}
+              >
+                {item.status}
+              </p>
+            </div>
+          ))}
+        </div>
 
       </div>
     </main>
