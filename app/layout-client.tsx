@@ -29,7 +29,88 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser") || "null");
     setCurrentUser(user);
-    initializeSampleData();
+
+    // Initialize empty collections if they don't exist
+    if (!localStorage.getItem("donors")) {
+      localStorage.setItem("donors", JSON.stringify([]));
+    }
+    if (!localStorage.getItem("ngos")) {
+      localStorage.setItem("ngos", JSON.stringify([]));
+    }
+    if (!localStorage.getItem("deliveryPartners")) {
+      localStorage.setItem("deliveryPartners", JSON.stringify([]));
+    }
+    if (!localStorage.getItem("donations")) {
+      localStorage.setItem("donations", JSON.stringify([]));
+    }
+
+    // Add seed data on first load if empty
+    const donors = JSON.parse(localStorage.getItem("donors") || "[]");
+    if (donors.length === 0) {
+      const seedDonors = [
+        {
+          name: "John's Pizzeria",
+          phone: "5550123",
+          email: "john@pizzeria.com",
+          address: "123 Main St",
+          location: "Downtown",
+          username: "johnpizza",
+          password: "password123"
+        },
+        {
+          name: "Green Garden Restaurant",
+          phone: "5550456",
+          email: "contact@greengarden.com",
+          address: "789 Oak St",
+          location: "Uptown",
+          username: "greengarden",
+          password: "password123"
+        }
+      ];
+      localStorage.setItem("donors", JSON.stringify(seedDonors));
+    }
+
+    const ngos = JSON.parse(localStorage.getItem("ngos") || "[]");
+    if (ngos.length === 0) {
+      const seedNGOs = [
+        {
+          ngoName: "City Food Bank",
+          email: "contact@cityfoodbank.org",
+          phone: "5550789",
+          address: "456 Charity Ave",
+          registrationNumber: "NGO001",
+          username: "cityfoodbank",
+          password: "password123"
+        },
+        {
+          ngoName: "Hope Center",
+          email: "info@hopecenter.org",
+          phone: "5550321",
+          address: "321 Hope Blvd",
+          registrationNumber: "NGO002",
+          username: "hopecenter",
+          password: "password123"
+        }
+      ];
+      localStorage.setItem("ngos", JSON.stringify(seedNGOs));
+    }
+
+    const deliveryPartners = JSON.parse(localStorage.getItem("deliveryPartners") || "[]");
+    if (deliveryPartners.length === 0) {
+      const seedPartners = [
+        {
+          name: "Fast Delivery Co",
+          phone: "5550654",
+          email: "contact@fastdelivery.com",
+          company: "Fast Delivery Company",
+          address: "555 Delivery St",
+          city: "Metropolis",
+          username: "fastdelivery",
+          password: "password123"
+        }
+      ];
+      localStorage.setItem("deliveryPartners", JSON.stringify(seedPartners));
+    }
 
     // Close search dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,109 +124,60 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const initializeSampleData = () => {
-    // Initialize deliveries if not exists
-    const deliveries = JSON.parse(localStorage.getItem("deliveries") || "[]");
-    if (deliveries.length === 0) {
-      const sampleDeliveries = [
-        {
-          id: 1,
-          status: "pending",
-          donor: {
-            name: "John's Pizzeria",
-            address: "123 Main St, Downtown",
-            contact: "+1 555-0123",
-            email: "john@pizzeria.com"
-          },
-          food: {
-            type: "Pizza",
-            quantity: "50 slices",
-            description: "Fresh pepperoni and cheese pizzas",
-            expiry: "2024-12-25"
-          },
-          ngo: {
-            name: "City Food Bank",
-            address: "456 Charity Ave, Midtown",
-            contact: "+1 555-0456",
-            email: "contact@cityfoodbank.org"
-          },
-          pickupTime: "2024-12-20 14:00",
-          deliveryTime: "2024-12-20 16:00"
-        }
-      ];
-      localStorage.setItem("deliveries", JSON.stringify(sampleDeliveries));
-    }
-
-    // Initialize sample donors if not exists
+  const handleSearch = () => {
+    const donations = JSON.parse(localStorage.getItem("donations") || "[]");
     const donors = JSON.parse(localStorage.getItem("donors") || "[]");
-    if (donors.length === 0) {
-      const sampleDonors = [
-        {
-          name: "John's Pizzeria",
-          phone: "+1 555-0123",
-          email: "john@pizzeria.com",
-          address: "123 Main St, Downtown",
-          location: "Downtown",
-          username: "johnpizza",
-          password: "password123"
-        },
-        {
-          name: "Green Garden Restaurant",
-          phone: "+1 555-0456",
-          email: "contact@greengarden.com",
-          address: "789 Oak St, Uptown",
-          location: "Uptown",
-          username: "greengarden",
-          password: "password123"
-        }
-      ];
-      localStorage.setItem("donors", JSON.stringify(sampleDonors));
-    }
-
-    // Initialize sample NGOs if not exists
     const ngos = JSON.parse(localStorage.getItem("ngos") || "[]");
-    if (ngos.length === 0) {
-      const sampleNGOs = [
-        {
-          ngoName: "City Food Bank",
-          email: "contact@cityfoodbank.org",
-          phone: "+1 555-0789",
-          address: "456 Charity Ave, Midtown",
-          registrationNumber: "NGO001",
-          username: "cityfoodbank",
-          password: "password123"
-        },
-        {
-          ngoName: "Hope Center",
-          email: "info@hopecenter.org",
-          phone: "+1 555-0321",
-          address: "321 Hope Blvd, Downtown",
-          registrationNumber: "NGO002",
-          username: "hopecenter",
-          password: "password123"
-        }
-      ];
-      localStorage.setItem("ngos", JSON.stringify(sampleNGOs));
-    }
-
-    // Initialize sample delivery partners if not exists
     const deliveryPartners = JSON.parse(localStorage.getItem("deliveryPartners") || "[]");
-    if (deliveryPartners.length === 0) {
-      const sampleDeliveryPartners = [
-        {
-          name: "Fast Delivery Co",
-          phone: "+1 555-0654",
-          email: "contact@fastdelivery.com",
-          company: "Fast Delivery Company",
-          address: "555 Delivery St, Industrial Area",
-          city: "Metropolis",
-          username: "fastdelivery",
-          password: "password123"
-        }
-      ];
-      localStorage.setItem("deliveryPartners", JSON.stringify(sampleDeliveryPartners));
-    }
+
+    const allResults: SearchResult[] = [
+      ...donations.map((item: any) => ({
+        id: `food-${item.id}`,
+        type: "food",
+        title: item.name,
+        location: item.location || "",
+        donor: item.donor || "",
+        detail: `${item.quantity} · ${item.status}`
+      })),
+      ...donors.map((item: any) => ({
+        id: `donor-${item.username}`,
+        type: "donor",
+        title: item.name,
+        location: item.location || item.address || "",
+        phone: item.phone,
+        detail: item.email || ""
+      })),
+      ...ngos.map((item: any) => ({
+        id: `ngo-${item.username}`,
+        type: "ngo",
+        title: item.ngoName,
+        location: item.address || "",
+        phone: item.phone,
+        detail: item.registrationNumber || ""
+      })),
+      ...deliveryPartners.map((item: any) => ({
+        id: `delivery-${item.username}`,
+        type: "delivery",
+        title: item.name,
+        location: item.city || item.address || "",
+        phone: item.phone,
+        detail: item.company || ""
+      }))
+    ];
+
+    const filtered = allResults.filter(item =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.detail || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.phone || "").toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    setSearchResults(filtered);
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchQuery]);
 
   const hideSidebar = pathname?.includes("/donor-login") || 
                      pathname?.includes("/ngo-login") ||
@@ -154,18 +186,6 @@ export function LayoutClient({ children }: { children: React.ReactNode }) {
                      pathname?.includes("/delivery-login") ||
                      pathname?.includes("/delivery-register") ||
                      pathname?.includes("/admin-login");
-
-  const handleSearch = () => {
-    const mockResults = [
-      { id: 1, type: "food", title: "Pizza Donation", location: "Downtown", donor: "John's Pizzeria" },
-      { id: 2, type: "food", title: "Rice & Curry", location: "Uptown", donor: "Indian Restaurant" },
-      { id: 3, type: "ngo", title: "City Food Bank", location: "Midtown", contact: "555-0123" }
-    ];
-    setSearchResults(mockResults.filter(item => 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.location.toLowerCase().includes(searchQuery.toLowerCase())
-    ));
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");

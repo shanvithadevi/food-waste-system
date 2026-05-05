@@ -1,39 +1,84 @@
- "use client";
-import { useState, useEffect } from "react";
+"use client";
+import { useState, useEffect, useMemo } from "react";
 
 export default function Search() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("donations")) || [];
+    const donations =
+      JSON.parse(localStorage.getItem("foodRequests") || "[]");
 
-    const filtered = data.filter(item =>
-      item.name.toLowerCase().includes(query.toLowerCase()) ||
-      item.location.toLowerCase().includes(query.toLowerCase())
-    );
+    const donors =
+      JSON.parse(localStorage.getItem("donors") || "[]");
 
-    setResults(filtered);
-  }, [query]);
+    const ngos =
+      JSON.parse(localStorage.getItem("ngos") || "[]");
+
+    const deliveryPartners =
+      JSON.parse(localStorage.getItem("deliveryPartners") || "[]");
+
+    const allData = [
+      ...donations.map((d: any) => ({
+        ...d,
+        category: "food",
+        displayName: d.foodName || d.name,
+        searchText: `${d.foodName || d.name} ${d.location} ${d.quantity} ${d.phone}`
+      })),
+
+      ...donors.map((d: any) => ({
+        ...d,
+        category: "donor",
+        displayName: d.name,
+        searchText: `${d.name} ${d.location} ${d.phone} ${d.email}`
+      })),
+
+      ...ngos.map((n: any) => ({
+        ...n,
+        category: "ngo",
+        displayName: n.ngoName,
+        searchText: `${n.ngoName} ${n.address} ${n.phone} ${n.email}`
+      })),
+
+      ...deliveryPartners.map((p: any) => ({
+        ...p,
+        category: "delivery",
+        displayName: p.name,
+        searchText: `${p.name} ${p.city} ${p.phone} ${p.email}`
+      }))
+    ];
+
+    setData(allData);
+  }, []);
+
+  // 🔍 FILTER RESULTS
+  const results = data.filter((item) =>
+    item.searchText
+      .toLowerCase()
+      .includes(query.toLowerCase())
+  );
 
   return (
     <main className="p-6 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
+
       <div className="max-w-5xl mx-auto">
 
         {/* TITLE */}
         <h1 className="text-3xl font-bold text-blue-600 mb-6 text-center">
-          🔍 Search Donations
+          🔍 Search System
         </h1>
 
         {/* SEARCH BOX */}
         <div className="bg-white p-4 rounded-xl shadow mb-6 border border-blue-200">
+
           <input
             type="text"
-            placeholder="Search by food name or location..."
+            placeholder="Search donors, NGOs, delivery, food..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full border-2 border-blue-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-blue-50"
+            className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+
         </div>
 
         {/* RESULTS */}
@@ -44,26 +89,46 @@ export default function Search() {
               No results found
             </div>
           ) : (
-            results.map((item) => (
+            results.map((item, index) => (
               <div
-                key={item.id}
-                className="bg-white p-5 rounded-xl shadow border-l-4 border-blue-400 hover:shadow-lg transition"
+                key={item.id || index}
+                className="bg-white p-5 rounded-xl shadow border-l-4 border-blue-400"
               >
-                <h2 className="text-xl font-bold text-blue-700 mb-2">
-                  {item.name}
-                </h2>
 
-                <div className="text-gray-700 space-y-1 text-sm">
-                  <p><span className="font-semibold">Quantity:</span> {item.quantity}</p>
-                  <p><span className="font-semibold">Location:</span> {item.location}</p>
-                  <p><span className="font-semibold">Phone:</span> {item.phone}</p>
-                  <p><span className="font-semibold">Prepared:</span> {item.preparedDate}</p>
-                  <p>
-                    <span className="font-semibold">Status:</span>{" "}
-                    <span className={item.status === "AVAILABLE" ? "text-orange-600" : "text-green-600"}>
-                      {item.status}
-                    </span>
-                  </p>
+                {/* HEADER */}
+                <div className="flex justify-between items-center mb-2">
+
+                  <h2 className="text-xl font-bold text-blue-700">
+                    {item.displayName}
+                  </h2>
+
+                  <span className={`px-2 py-1 rounded text-xs font-bold ${
+                    item.category === "food"
+                      ? "bg-orange-200 text-orange-800"
+                      : item.category === "donor"
+                      ? "bg-green-200 text-green-800"
+                      : item.category === "ngo"
+                      ? "bg-purple-200 text-purple-800"
+                      : "bg-blue-200 text-blue-800"
+                  }`}>
+                    {item.category.toUpperCase()}
+                  </span>
+
+                </div>
+
+                {/* DETAILS */}
+                <div className="text-sm text-gray-700 space-y-1">
+
+                  {Object.entries(item)
+                    .filter(([key]) =>
+                      !["searchText", "category", "displayName"].includes(key)
+                    )
+                    .map(([key, value]: [string, any]) => (
+                      <p key={key}>
+                        <span className="font-semibold">{key}:</span> {String(value)}
+                      </p>
+                    ))}
+
                 </div>
 
               </div>

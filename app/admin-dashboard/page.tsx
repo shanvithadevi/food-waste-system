@@ -10,11 +10,20 @@ interface User {
 interface Delivery {
   id: number;
   status: string;
-  donor: any;
-  food: any;
-  ngo: any;
-  pickupTime: string;
-  deliveryTime: string;
+  foodName?: string;
+  quantity?: string;
+  location?: string;
+  phone?: string;
+  preparedDate?: string;
+  assignedTo?: string;
+  deliveryPartner?: {
+    name?: string;
+    mobile?: string;
+    vehicleType?: string;
+    company?: string;
+  };
+  name?: string;
+  [key: string]: any;
 }
 
 interface Account {
@@ -60,19 +69,21 @@ export default function AdminDashboard() {
     }
     setCurrentUser(user);
 
+    const foodRequests = JSON.parse(localStorage.getItem("foodRequests") || "[]");
     const storedDeliveries = JSON.parse(localStorage.getItem("deliveries") || "[]");
-    setDeliveries(storedDeliveries);
+    const actualDeliveries = foodRequests.length > 0 ? foodRequests : storedDeliveries;
+    setDeliveries(actualDeliveries);
 
     const donors = JSON.parse(localStorage.getItem("donors") || "[]");
     const ngos = JSON.parse(localStorage.getItem("ngos") || "[]");
-    const deliveryPartners = JSON.parse(localStorage.getItem("deliveryPartners") || "[]");
+    const deliveryPartners = JSON.parse(localStorage.getItem("deliveryUsers") || "[]");
     setAccounts({ donors, ngos, deliveryPartners });
 
-    const pending = storedDeliveries.filter((d: Delivery) => d.status === "pending").length;
-    const completed = storedDeliveries.filter((d: Delivery) => d.status === "completed").length;
+    const pending = actualDeliveries.filter((d: Delivery) => d.status !== "DONATED" && d.status !== "completed").length;
+    const completed = actualDeliveries.filter((d: Delivery) => d.status === "DONATED" || d.status === "completed").length;
 
     setStats({
-      totalDeliveries: storedDeliveries.length,
+      totalDeliveries: actualDeliveries.length,
       pendingDeliveries: pending,
       completedDeliveries: completed,
       totalDonors: donors.length,
@@ -87,7 +98,8 @@ export default function AdminDashboard() {
         (account: Account) => account.username !== username
       );
 
-      localStorage.setItem(type, JSON.stringify(updatedAccounts[type]));
+      const storageKey = type === "deliveryPartners" ? "deliveryUsers" : type;
+      localStorage.setItem(storageKey, JSON.stringify(updatedAccounts[type]));
       setAccounts(updatedAccounts);
 
       setStats((prev) => ({
@@ -98,17 +110,24 @@ export default function AdminDashboard() {
     }
   };
 
-  // ✅ FIXED FUNCTION
   const updateDeliveryStatus = (id: number, status: string) => {
-    const updatedDeliveries = deliveries.map((delivery) =>
+    const storedFoodRequests = JSON.parse(localStorage.getItem("foodRequests") || "[]");
+    const hasFoodRequests = storedFoodRequests.length > 0;
+
+    const updatedDeliveries = (hasFoodRequests ? storedFoodRequests : deliveries).map((delivery: Delivery) =>
       delivery.id === id ? { ...delivery, status } : delivery
     );
 
-    localStorage.setItem("deliveries", JSON.stringify(updatedDeliveries));
+    if (hasFoodRequests) {
+      localStorage.setItem("foodRequests", JSON.stringify(updatedDeliveries));
+    } else {
+      localStorage.setItem("deliveries", JSON.stringify(updatedDeliveries));
+    }
+
     setDeliveries(updatedDeliveries);
 
-    const pending = updatedDeliveries.filter((d) => d.status === "pending").length;
-    const completed = updatedDeliveries.filter((d) => d.status === "completed").length;
+    const pending = updatedDeliveries.filter((d: Delivery) => d.status !== "DONATED" && d.status !== "completed").length;
+    const completed = updatedDeliveries.filter((d: Delivery) => d.status === "DONATED" || d.status === "completed").length;
 
     setStats((prev) => ({
       ...prev,
@@ -197,12 +216,23 @@ export default function AdminDashboard() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-lg font-semibold text-black">Delivery #{delivery.id}</h3>
-                      <p className="text-gray-600">Status: <span className={`font-semibold ${delivery.status === 'pending' ? 'text-yellow-600' : delivery.status === 'in_transit' ? 'text-blue-600' : 'text-green-600'}`}>{delivery.status}</span></p>
-                      <p className="text-gray-600">Donor: {delivery.donor.name}</p>
-                      <p className="text-gray-600">NGO: {delivery.ngo.name}</p>
-                      <p className="text-gray-600">Food: {delivery.food.type} - {delivery.food.quantity}</p>
-                      <p className="text-gray-600">Pickup: {delivery.pickupTime}</p>
-                      <p className="text-gray-600">Delivery: {delivery.deliveryTime}</p>
+                      <p className="text-gray-600">Status: <span className={`font-semibold ${delivery.status === 'AVAILABLE' ? 'text-yellow-600' : delivery.status === 'ASSIGNED_TO_DELIVERY' ? 'text-blue-600' : 'text-green-600'}`}>{delivery.status}</span></p>
+                      <p className="text-gray-600">Food: {delivery.foodName || delivery.food?.type} - {delivery.quantity || delivery.food?.quantity}</p>
+                      <p className="text-gray-600">Donor: {delivery.name || delivery.donor?.name || 'Unknown'}</p>
+                      <p className="text-gray-600">Phone: {delivery.phone || delivery.donor?.phone || 'N/A'}</p>
+                      <p className="text-gray-600">Location: {delivery.location || 'N/A'}</p>
+                      <p className="text-gray-600">Prepared: {delivery.preparedDate || delivery.pickupTime || 'N/A'}</p>
+                      {delivery.deliveryPartner ? (
+                        <div className="mt-2 p-3 rounded-lg bg-gray-50 border border-gray-200">
+                          <p className="text-sm font-semibold text-green-700">Delivery Partner Info</p>
+                          <p className="text-sm">Name: {delivery.deliveryPartner.name}</p>
+                          <p className="text-sm">Phone: {delivery.deliveryPartner.mobile}</p>
+                          <p className="text-sm">Vehicle: {delivery.deliveryPartner.vehicleType}</p>
+                          {delivery.deliveryPartner.company && <p className="text-sm">Company: {delivery.deliveryPartner.company}</p>}
+                        </div>
+                      ) : delivery.assignedTo ? (
+                        <p className="text-gray-600">Assigned To: {delivery.assignedTo}</p>
+                      ) : null}
                     </div>
                     <div className="flex space-x-2">
                       {delivery.status === "pending" && (
