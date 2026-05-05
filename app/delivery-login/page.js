@@ -18,17 +18,20 @@ export default function DeliveryLogin() {
 
     if (validUser) {
       localStorage.setItem("loggedInUser", username);
-      router.push("/view-donations");
+
+      // ✅ Go directly to deliveries
+      router.push("/view-deliveries");
     } else {
-      alert("Invalid credentials or not registered");
+      alert("Invalid username or password");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-200">
       <div className="bg-white p-6 rounded-xl shadow w-80">
+
         <h2 className="text-xl font-bold text-center mb-4">
-          Delivery Login
+          🚚 Delivery Login
         </h2>
 
         <input
@@ -46,7 +49,7 @@ export default function DeliveryLogin() {
 
         <button
           onClick={handleLogin}
-          className="w-full bg-blue-500 text-white p-2"
+          className="w-full bg-blue-500 text-white p-2 rounded"
         >
           Login
         </button>
@@ -60,6 +63,7 @@ export default function DeliveryLogin() {
             Register here
           </span>
         </p>
+
       </div>
     </div>
   );
