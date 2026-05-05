@@ -2,60 +2,75 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function DeliveryRegister() {
+export default function Register() {
   const router = useRouter();
 
   const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    vehicle: "",
-    company: "",
     username: "",
-    password: "",
+    password: ""
   });
 
-  const handleRegister = (e) => {
-    e.preventDefault();
+  const handleRegister = () => {
+    if (!form.username || !form.password) {
+      alert("Fill all fields");
+      return;
+    }
 
-    const newPartner = {
-      id: Date.now(),
-      ...form,
-    };
+    const users =
+      JSON.parse(localStorage.getItem("deliveryUsers")) || [];
 
-    const existing = JSON.parse(localStorage.getItem("partners")) || [];
-    const updated = [...existing, newPartner];
+    const exists = users.find(u => u.username === form.username);
 
-    localStorage.setItem("partners", JSON.stringify(updated));
+    if (exists) {
+      alert("User already exists");
+      return;
+    }
 
-    alert("Registered Successfully!");
+    users.push(form);
 
-    // 👉 Redirect
-    router.push("/delivery-view");
+    localStorage.setItem("deliveryUsers", JSON.stringify(users));
+
+    // ✅ Auto login
+    localStorage.setItem("loggedInUser", form.username);
+
+    alert("Registered & Logged in!");
+
+    router.push("/view-deliveries");
   };
 
   return (
-    <main className="p-6 flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
-      <form onSubmit={handleRegister} className="bg-white p-6 rounded-xl shadow w-96 flex flex-col gap-2">
+    <div className="flex items-center justify-center min-h-screen bg-purple-200">
+      <div className="bg-white p-6 rounded-xl shadow w-80">
 
-        <h1 className="text-xl font-bold text-center mb-2">
-          Delivery Register
-        </h1>
+        <h2 className="text-xl font-bold mb-4 text-center">
+          🚚 Delivery Register
+        </h2>
 
-        <input placeholder="Name" onChange={(e)=>setForm({...form,name:e.target.value})} required />
-        <input placeholder="Phone" onChange={(e)=>setForm({...form,phone:e.target.value})} required />
-        <input placeholder="Email" onChange={(e)=>setForm({...form,email:e.target.value})} required />
-        <input placeholder="Vehicle" onChange={(e)=>setForm({...form,vehicle:e.target.value})} required />
-        <input placeholder="Company" onChange={(e)=>setForm({...form,company:e.target.value})} required />
+        <input
+          placeholder="Username"
+          className="w-full p-2 border mb-3"
+          onChange={(e) =>
+            setForm({ ...form, username: e.target.value })
+          }
+        />
 
-        {/* NEW */}
-        <input placeholder="Username" onChange={(e)=>setForm({...form,username:e.target.value})} required />
-        <input type="password" placeholder="Password" onChange={(e)=>setForm({...form,password:e.target.value})} required />
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full p-2 border mb-3"
+          onChange={(e) =>
+            setForm({ ...form, password: e.target.value })
+          }
+        />
 
-        <button className="bg-blue-500 text-white p-2 rounded mt-2">
+        <button
+          onClick={handleRegister}
+          className="w-full bg-purple-500 text-white p-2 rounded"
+        >
           Register
         </button>
-      </form>
-    </main>
+
+      </div>
+    </div>
   );
 }
