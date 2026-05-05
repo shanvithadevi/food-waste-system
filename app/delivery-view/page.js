@@ -1,115 +1,132 @@
- "use client";
+"use client";
 import { useState, useEffect } from "react";
 
 export default function ViewDeliveries() {
   const [deliveries, setDeliveries] = useState([]);
+  const [user, setUser] = useState("");
 
-  // Load deliveries
+  const loadData = () => {
+    const data =
+      JSON.parse(localStorage.getItem("deliveries")) || [];
+    setDeliveries(data);
+  };
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("deliveries")) || [];
-    setDeliveries(stored);
+    const loggedUser = localStorage.getItem("loggedInUser");
+
+    // 🔒 Protect page
+    if (!loggedUser) {
+      window.location.href = "/delivery-login";
+      return;
+    }
+
+    setUser(loggedUser);
+
+    loadData();
+
+    // 🔄 Auto refresh
+    window.addEventListener("focus", loadData);
+    return () => window.removeEventListener("focus", loadData);
   }, []);
 
-  // Save deliveries
-  useEffect(() => {
-    localStorage.setItem("deliveries", JSON.stringify(deliveries));
-  }, [deliveries]);
+  const updateStatus = (id, status) => {
+    const data =
+      JSON.parse(localStorage.getItem("deliveries")) || [];
 
-  // Accept Delivery
-  const acceptDelivery = (id) => {
-    const updated = deliveries.map((d) =>
-      d.id === id
-        ? { ...d, status: "IN TRANSIT" }
-        : d
+    const updated = data.map(d =>
+      d.id === id ? { ...d, status } : d
     );
+
+    localStorage.setItem("deliveries", JSON.stringify(updated));
     setDeliveries(updated);
   };
 
-  // Mark as Delivered
-  const markDelivered = (id) => {
-    const updated = deliveries.map((d) =>
-      d.id === id
-        ? { ...d, status: "DELIVERED" }
-        : d
-    );
-    setDeliveries(updated);
+  const logout = () => {
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "/delivery-login";
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-green-100 to-blue-100">
-      
-      <h1 className="text-3xl font-bold text-green-600 mb-6">
-        🚚 View Deliveries
-      </h1>
+    <div className="p-6 min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
 
-      {deliveries.length === 0 ? (
-        <p className="text-gray-600">No deliveries available</p>
-      ) : (
-        <div className="space-y-5">
-          {deliveries.map((d) => (
-            <div
-              key={d.id}
-              className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500"
-            >
-              {/* Food */}
-              <h2 className="text-xl font-bold text-blue-600 mb-2">
-                🍱 {d.food}
-              </h2>
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-blue-600">
+          🚚 Deliveries
+        </h1>
 
-              {/* Details */}
-              <div className="text-gray-700 space-y-1">
-                <p><b>Donor:</b> {d.donor}</p>
-                <p><b>NGO:</b> {d.ngo}</p>
-                <p><b>Location:</b> {d.location}</p>
-                <p><b>Quantity:</b> {d.quantity}</p>
-                <p><b>Prepared Date:</b> {d.preparedDate}</p>
-              </div>
+        <div className="flex items-center gap-4">
+          <span className="text-gray-700 font-semibold">
+            👤 {user}
+          </span>
 
-              {/* Status */}
-              <p className="mt-3">
-                <b>Status:</b>{" "}
-                <span className={`font-semibold ${
-                  d.status === "PENDING" ? "text-yellow-600" :
-                  d.status === "IN TRANSIT" ? "text-blue-600" :
-                  "text-green-600"
-                }`}>
-                  {d.status}
-                </span>
-              </p>
-
-              {/* Buttons */}
-              <div className="mt-4 flex gap-3">
-                
-                {d.status === "PENDING" && (
-                  <button
-                    onClick={() => acceptDelivery(d.id)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                  >
-                    Accept Delivery
-                  </button>
-                )}
-
-                {d.status === "IN TRANSIT" && (
-                  <button
-                    onClick={() => markDelivered(d.id)}
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
-                  >
-                    Mark as Delivered
-                  </button>
-                )}
-
-                {d.status === "DELIVERED" && (
-                  <div className="text-green-600 font-bold">
-                    ✅ Delivered Successfully
-                  </div>
-                )}
-
-              </div>
-
-            </div>
-          ))}
+          <button
+            onClick={logout}
+            className="bg-red-500 text-white px-3 py-1 rounded"
+          >
+            Logout
+          </button>
         </div>
+      </div>
+
+      {/* EMPTY */}
+      {deliveries.length === 0 && (
+        <p className="text-center text-gray-500">
+          No deliveries available
+        </p>
       )}
+
+      {/* CARDS */}
+      {deliveries.map(d => (
+        <div
+          key={d.id}
+          className="bg-white p-5 mb-4 rounded-xl shadow border-l-4 border-blue-400"
+        >
+          <h2 className="text-xl font-bold text-blue-700 mb-2">
+            {d.food}
+          </h2>
+
+          <div className="text-gray-700 text-sm space-y-1">
+            <p><b>Donor:</b> {d.donor}</p>
+            <p><b>Phone:</b> {d.phone}</p>
+            <p><b>NGO:</b> {d.ngo}</p>
+            <p><b>Location:</b> {d.location}</p>
+            <p><b>Quantity:</b> {d.quantity}</p>
+            <p><b>Date:</b> {d.preparedDate}</p>
+
+            <p className="mt-2 font-bold">
+              Status:{" "}
+              <span className={
+                d.status === "PENDING" ? "text-orange-600" :
+                d.status === "IN TRANSIT" ? "text-blue-600" :
+                "text-green-600"
+              }>
+                {d.status}
+              </span>
+            </p>
+          </div>
+
+          {/* ACTION BUTTONS */}
+          {d.status === "PENDING" && (
+            <button
+              onClick={() => updateStatus(d.id, "IN TRANSIT")}
+              className="mt-3 bg-blue-500 text-white px-4 py-1 rounded"
+            >
+              Accept Delivery
+            </button>
+          )}
+
+          {d.status === "IN TRANSIT" && (
+            <button
+              onClick={() => updateStatus(d.id, "DELIVERED")}
+              className="mt-3 bg-green-500 text-white px-4 py-1 rounded"
+            >
+              Mark Delivered
+            </button>
+          )}
+
+        </div>
+      ))}
 
     </div>
   );
