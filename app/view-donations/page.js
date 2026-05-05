@@ -2,66 +2,64 @@
 import { useState, useEffect } from "react";
 
 export default function ViewDonations() {
-  const [donations, setDonations] = useState([]);
-  const [partners, setPartners] = useState([]);
-  const [selectedFood, setSelectedFood] = useState(null);
-  const [showDialog, setShowDialog] = useState(false);
-  const [showPartners, setShowPartners] = useState(false);
+  const [available, setAvailable] = useState([]);
+  const [donated, setDonated] = useState([]);
+
+  const loadData = () => {
+    const data = JSON.parse(localStorage.getItem("donations")) || [];
+
+    setAvailable(data.filter(d => d.status === "AVAILABLE"));
+    setDonated(data.filter(d => d.status === "DONATED"));
+  };
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("donations")) || [];
-    setDonations(data);
+    loadData();
 
-    const p = JSON.parse(localStorage.getItem("partners")) || [];
-    setPartners(p);
+    // Auto refresh
+    window.addEventListener("focus", loadData);
+    return () => window.removeEventListener("focus", loadData);
   }, []);
 
-  // ACCEPT FOOD
-  const handleAccept = (food) => {
-    const updated = donations.map((item) =>
+  const acceptDonation = (food) => {
+    const data = JSON.parse(localStorage.getItem("donations")) || [];
+
+    const updated = data.map(item =>
       item.id === food.id
-        ? { ...item, status: "DONATED", ngo: "Helping NGO" }
+        ? { ...item, status: "DONATED" }
         : item
     );
 
-    setDonations(updated);
     localStorage.setItem("donations", JSON.stringify(updated));
 
-    setSelectedFood(food);
-    setShowDialog(true);
-  };
-
-  // CREATE DELIVERY (IMPORTANT)
-  const createDelivery = (driver) => {
+    // 🔥 Create Delivery
     const newDelivery = {
       id: Date.now(),
-      driverId: driver.id,
-      donorName: selectedFood.name,
-      donorPhone: selectedFood.phone,
-      foodName: selectedFood.name,
-      quantity: selectedFood.quantity,
-      location: selectedFood.location,
-      ngoName: "Helping NGO",
-      status: "pending",
+      food: food.name,
+      donor: food.name,
+      phone: food.phone,
+      location: food.location,
+      quantity: food.quantity,
+      preparedDate: food.preparedDate,
+      ngo: "Helping Hands NGO",
+      status: "PENDING"
     };
 
-    const existing = JSON.parse(localStorage.getItem("deliveries")) || [];
-    localStorage.setItem("deliveries", JSON.stringify([...existing, newDelivery]));
+    const deliveries =
+      JSON.parse(localStorage.getItem("deliveries")) || [];
 
-    alert("Driver Assigned Successfully!");
+    localStorage.setItem(
+      "deliveries",
+      JSON.stringify([...deliveries, newDelivery])
+    );
 
-    setShowDialog(false);
-    setShowPartners(false);
+    loadData();
   };
-
-  const available = donations.filter((d) => d.status === "AVAILABLE");
-  const donated = donations.filter((d) => d.status === "DONATED");
 
   return (
     <main className="p-6 bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
       <div className="max-w-5xl mx-auto">
 
-        <h1 className="text-3xl font-bold text-center mb-10 text-blue-600">
+        <h1 className="text-3xl font-bold text-blue-600 text-center mb-8">
           View Donations
         </h1>
 
@@ -70,20 +68,23 @@ export default function ViewDonations() {
           {/* AVAILABLE */}
           <div className="bg-white p-5 rounded-xl shadow border-l-4 border-orange-400">
             <h2 className="text-xl font-bold text-orange-600 mb-4">
-              Available Donations
+              🎁 Available Donations
             </h2>
 
-            {available.map((food) => (
-              <div key={food.id} className="bg-orange-50 p-4 rounded mb-3 border">
+            {available.length === 0 && (
+              <p className="text-gray-500">No available food</p>
+            )}
 
-                <p className="font-bold">{food.name}</p>
-                <p>Quantity: {food.quantity}</p>
-                <p>Location: {food.location}</p>
-                <p>Phone: {food.phone}</p>
-                <p>Date: {food.preparedDate}</p>
+            {available.map(food => (
+              <div key={food.id} className="bg-orange-50 p-4 mb-3 rounded">
+                <h3 className="font-bold text-orange-800">{food.name}</h3>
+
+                <p className="text-sm">Qty: {food.quantity}</p>
+                <p className="text-sm">Location: {food.location}</p>
+                <p className="text-sm">Phone: {food.phone}</p>
 
                 <button
-                  onClick={() => handleAccept(food)}
+                  onClick={() => acceptDonation(food)}
                   className="mt-3 w-full bg-orange-400 text-white p-2 rounded"
                 >
                   Accept
@@ -95,20 +96,21 @@ export default function ViewDonations() {
           {/* ACCEPTED */}
           <div className="bg-white p-5 rounded-xl shadow border-l-4 border-green-400">
             <h2 className="text-xl font-bold text-green-600 mb-4">
-              Accepted Donations
+              ✓ Accepted Donations
             </h2>
 
-            {donated.map((food) => (
-              <div key={food.id} className="bg-green-50 p-4 rounded mb-3 border">
+            {donated.length === 0 && (
+              <p className="text-gray-500">No accepted food</p>
+            )}
 
-                <p className="font-bold">{food.name}</p>
-                <p>Quantity: {food.quantity}</p>
-                <p>Location: {food.location}</p>
-                <p>Phone: {food.phone}</p>
-                <p>Date: {food.preparedDate}</p>
-                <p className="text-sm">NGO: {food.ngo}</p>
+            {donated.map(food => (
+              <div key={food.id} className="bg-green-50 p-4 mb-3 rounded">
+                <h3 className="font-bold text-green-800">{food.name}</h3>
 
-                <span className="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                <p className="text-sm">Qty: {food.quantity}</p>
+                <p className="text-sm">Location: {food.location}</p>
+
+                <span className="inline-block mt-2 bg-green-600 text-white px-3 py-1 rounded text-sm">
                   DONATED
                 </span>
               </div>
@@ -116,73 +118,6 @@ export default function ViewDonations() {
           </div>
 
         </div>
-
-        {/* STEP 1: DELIVERY OPTION */}
-        {showDialog && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-xl w-80 shadow-lg">
-
-              <h2 className="text-lg font-bold mb-4 text-center">
-                Select Delivery Option
-              </h2>
-
-              <button
-                onClick={() => setShowPartners(true)}
-                className="w-full bg-blue-500 text-white p-2 rounded mb-2"
-              >
-                Choose Delivery Partner
-              </button>
-
-              <button
-                onClick={() => {
-                  alert("Self Pickup Selected");
-                  setShowDialog(false);
-                }}
-                className="w-full bg-green-500 text-white p-2 rounded mb-2"
-              >
-                Self Pickup
-              </button>
-
-              <button
-                onClick={() => setShowDialog(false)}
-                className="w-full bg-gray-300 p-2 rounded"
-              >
-                Cancel
-              </button>
-
-            </div>
-          </div>
-        )}
-
-        {/* STEP 2: SELECT DRIVER */}
-        {showPartners && (
-          <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-xl w-80">
-
-              <h2 className="text-lg font-bold mb-3 text-center">
-                Select Driver
-              </h2>
-
-              {partners.map((p) => (
-                <div key={p.id} className="border p-3 mb-2 rounded">
-                  <p className="font-bold">{p.name}</p>
-                  <p className="text-sm">{p.company}</p>
-
-                  <button
-                    onClick={() => createDelivery(p)}
-                    className="bg-blue-500 text-white px-2 py-1 mt-2 rounded"
-                  >
-                    Select
-                  </button>
-                </div>
-              ))}
-
-              <button onClick={() => setShowPartners(false)}>
-                Back
-              </button>
-            </div>
-          </div>
-        )}
 
       </div>
     </main>
